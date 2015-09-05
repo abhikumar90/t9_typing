@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+    <h3> T9 Typing</h3>
+</head>
+
+<table id="phone">
+    <tr>
+        <td colspan="3"><input type="text" id="result"/></td>
+    </tr>
+    <tr>
+        <td> <button data-value="1" class="key">1<span>. , !</span></button> </td>
+        <td> <button data-value="2" class="key">2<span>a b c</span></button> </td>
+        <td> <button data-value="3" class="key">3<span>d e f</span></button> </td>
+    </tr>
+    <tr>
+        <td><button data-value="4" class="key">4<span>g h i</span> </button></td>
+        <td><button data-value="5" class="key">5<span>j k l</span></button></td>
+        <td> <button data-value="6" class="key">6<span>m n o</span></button></td>
+    </tr>
+    <tr> <td><button data-value="7" class="key">7 <span>p q r s</span></button></td>
+        <td><button data-value="8" class="key">8<span>t u v</span></button></td>
+        <td><button data-value="9" class="key">9<span>w x y z</span></button></td>
+    </tr>
+    <tr>
+        <td><button data-value="*" class="key">*</button></td>
+        <td><button data-value="0" class="key">0</button></td>
+        <td><button data-value="#" class="key">#</button></td>
+    </tr>
+</table>
+<div class="remove_button">
+   <input type="submit" value="Remove Text" id="remove_text">
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="http://rawgit.com/pisi/Longclick/master/jquery.longclick-min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#phone").find("button").mousedown(function(event){
+            var button_pressed = $(event.currentTarget);
+            var d = new Date();
+            var t = d.getTime();
+$("#result").val(t9($("#result").val(),button_pressed,t));
+        });
+
+        $("#phone").find("button").longclick(500, function(event){
+            localStorage.setItem('long_press',"true");
+            var button_pressed = $(event.currentTarget);
+            $("#result").val(t9($("#result").val(),button_pressed));
+        });
+        $("#phone").find("button").longclick(500, function(event){
+            localStorage.setItem('long_press',"true");
+            var button_pressed = $(event.currentTarget);
+            $("#result").val(t9($("#result").val(),button_pressed));
+        });
+        $("#phone").find("button").longclick(500, function(event){
+            localStorage.setItem('long_press',"true");
+            var button_pressed = $(event.currentTarget);
+            $("#result").val(t9($("#result").val(),button_pressed));
+        });
+
+    })
+
+    function t9(text,button_pressed,t){
+        // console.log(t);
+        // console.log(localStorage.getItem('previousclicktime'));
+        var press_hold = localStorage.getItem('long_press');
+        console.log(press_hold);
+        var last_clicked = localStorage.getItem('previousclicktime');
+        var btnText = button_pressed.children("span").text();
+        var result = "";
+        localStorage.setItem('previousclicktime',t);
+        btnText = btnText.replace(/\s/g, "") + button_pressed.data("value");
+// console.log(btnText);
+// console.log(button_pressed.data("value"));
+        if(text != "") {
+            if ($.inArray(text[text.length - 1], btnText) != -1 ){
+                for (var i = 0 ; i < btnText.length; i++){
+                    if(text[text.length - 1] == btnText[i]) {
+                        if(i != btnText.length - 1){
+                            text = text.slice(0, -1);
+                            text = text +  btnText[i + 1];
+                            break;
+                        } else
+                            text = text.slice(0, -1);
+                        text = text +  btnText[0];
+                    }
+                }
+            } else {
+                text = text + btnText[0];
+            }
+        } else
+            text = text + btnText[0];
+        // Write your code here
+        console.log(text);
+        if ((t - last_clicked) < 1000){
+            console.log('inside if');
+            return text
+        }
+        else if (press_hold == "true"){
+             localStorage.setItem('long_press',"false");
+            console.log('inside if else');
+            return text
+        }
+        else{
+            console.log('inside else');
+            var pre_val = $("#result").val();
+            var insert_val = text.slice(-1);
+            return pre_val+insert_val
+        }
+
+    }
+
+$("#remove_text").click(function(){ $("#result").attr("value","")});
+</script>
+
+
+<style>
+    #phone{
+        appearance:button;
+        -moz-appearance:button;
+        -webkit-appearance:button;
+        padding-left: 3px;
+    }
+
+    h3 {
+        background-color: #fc0;
+        padding-left: 523px;
+    }
+    #phone button{
+        height: 50px;
+        width: 75px;
+    }
+    #phone button span{
+        display: block;
+        margin-top: 5px;
+        font-size: 10px;
+    }
+    #result{
+        width: 225px;
+        height: 25px;
+        margin-left:2px;
+    }
+
+.remove_button {
+    margin-left: 66px;
+    padding-top: 8px;
+}
+</style>
+
+</html>
+
